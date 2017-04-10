@@ -4,7 +4,7 @@ var webpack = require('webpack');
 module.exports = {
   entry: './index.js',
   output: {
-    filename: 'bundle.js',
+    filename: 'campaign_data.js',
     path: path.resolve(__dirname, 'dist')
   },
   plugins:[
