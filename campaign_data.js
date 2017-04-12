@@ -60,11 +60,9 @@ module.exports = function() {
   var saveCampaignData = function (data) {
     cookie.set(
       'campaign_data',
-      JSON.stringify(
-        Object.assign({}, data, {
-          created_at: (new Date()).getTime()
-        })
-      ),
+      Object.assign({}, data, {
+        created_at: (new Date()).getTime()
+      }),
       {
         expires: expireInSeconds(CAMPAIGN_TIMEOUT),
         path: '/',
