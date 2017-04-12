@@ -30,6 +30,15 @@ module.exports = function() {
   var SESSION_TIMEOUT = 30*60; // 30 minutes
   var CAMPAIGN_TIMEOUT = 15768000; // 6 months
   var dirtCookie = false;
+
+  var cookie = Cookies.withConverter({
+    read: function (value, name) {
+      return decodeURIComponent(value);
+    },
+    write: function (value, name) {
+      return encodeURIComponent(String(value));
+    }
+  });
   
   var getParameterByName = function (name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -45,7 +54,7 @@ module.exports = function() {
   }
 
   var saveCampaignData = function (data) {
-    Cookies.set(
+    cookie.set(
       'campaign_data',
       JSON.stringify(
         Object.assign({}, data, {
@@ -62,7 +71,7 @@ module.exports = function() {
   };
 
   var renewCampaignDataCookie = function(){
-    saveCampaignData(JSON.parse(Cookies.get('campaign_data')));
+    saveCampaignData(cookie.getJSON('campaign_data'));
   }
 
   var referrer = (document.referrer.indexOf(location.protocol + '//' + location.host) === -1 && document.referrer !== '' && document.referrer !== '0' && document.referrer !== '-' ? document.referrer : undefined);
@@ -121,25 +130,25 @@ module.exports = function() {
     var now = new Date();
     var createdAt = new Date();
 
-    createdAt.setTime(JSON.parse(Cookies.get('campaign_data')).created_at);
+    createdAt.setTime(cookie.getJSON('campaign_data').created_at);
     return createdAt.getTime() + SESSION_TIMEOUT * 1000 > now.getTime();
   }
 
   var anotherSession = function(){
-    return !(Cookies.get('campaign_data') && sessionNotExpired());
+    return !(cookie.get('campaign_data') && sessionNotExpired());
   }
 
   var haveUtmCampaignCookie = function(){
-    return !!(Cookies.get('__utmz'));
+    return !!(cookie.get('__utmz'));
   }
 
   var haveCampaignCookie = function(){
-    return !!(Cookies.get('campaign_data'));
+    return !!(cookie.get('campaign_data'));
   }
 
   var getParamFromUtmCampaignCookie = function(param){
     var e = new RegExp(param + '=(.*?)($|\\|)');
-    var matches = e.exec(Cookies.get('__utmz'));
+    var matches = e.exec(cookie.get('__utmz'));
     return matches ? matches[1] : null;
   }
 
@@ -231,7 +240,7 @@ module.exports = function() {
   var captureCampaignData = function () {
     if (documentLocationData) {
       saveCampaignData(documentLocationData);
-    } else if (!Cookies.get('campaign_data')) {
+    } else if (!cookie.get('campaign_data')) {
       saveCampaignData({
         location: document.location.href,
         campaign_source: '(direct)',
