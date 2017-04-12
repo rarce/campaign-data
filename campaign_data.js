@@ -76,7 +76,14 @@ module.exports = function() {
     saveCampaignData(cookie.getJSON('campaign_data'));
   }
 
-  var referrer = (document.referrer.indexOf(location.protocol + '//' + location.host) === -1 && document.referrer !== '' && document.referrer !== '0' && document.referrer !== '-' ? document.referrer : undefined);
+  var diferentDomain = function() {
+    if (getCookieDomain(location.hostname)!==getCookieDomain(document.referrer)) {
+      return true;
+    }
+    return false;
+  }
+
+  var referrer = (document.referrer.indexOf(location.protocol + '//' + location.host) === -1 && document.referrer !== '' && document.referrer !== '0' && document.referrer !== '-' && diferentDomain() ? document.referrer : undefined);
 
   // https://developers.google.com/analytics/devguides/collection/gajs/gaTrackingTraffic?hl=en#searchEngine
   var searchEngineData = 'daum:q eniro:search_word naver:query pchome:q images.google:q google:q yahoo:p yahoo:q msn:q bing:q aol:query aol:q lycos:q lycos:query ask:q altavista:q search.netscape:query cnn:query about:terms alltheweb:q voila:rdata virgilio:qs baidu:wd baidu:word alice:qs yandex:text najdi:q mamma:query seznam:q search:q wp:szukaj online.onetcenter:qt szukacz:q yam:k pchome:q kvasir:q sesam:q ozu:q terra:query mynet:q ekolay:q rambler:words'.split(' ');
