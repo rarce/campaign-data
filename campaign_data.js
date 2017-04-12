@@ -53,6 +53,10 @@ module.exports = function() {
     return(date);
   }
 
+  var getCookieDomain = function(domain){
+    return domain.match(/^[\d.]+$|/)[0]||(domain.match('localhost')||[''])[0]||('.'+(domain.match(/[^.]+\.(\w{2,3}\.\w{2}|\w{2,})$/)||[domain])[0])
+  }
+
   var saveCampaignData = function (data) {
     cookie.set(
       'campaign_data',
@@ -64,7 +68,7 @@ module.exports = function() {
       {
         expires: expireInSeconds(CAMPAIGN_TIMEOUT),
         path: '/',
-        // domain: '' // GET DOMAIN
+        domain: getCookieDomain(location.hostname)
       }
     );
     dirtCookie = true;
